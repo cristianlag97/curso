@@ -1,6 +1,7 @@
 <template>
   <div>
-    <v-toolbar dense>
+    <!-- Navbar -->
+    <v-toolbar dense dark>
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
 
       <v-toolbar-title>Title</v-toolbar-title>
@@ -20,7 +21,7 @@
       </v-btn>
     </v-toolbar>
 
-    <!-- Navegation -->
+    <!-- Navegation drawer -->
     <v-navigation-drawer
       v-model="drawer"
       absolute
@@ -68,11 +69,11 @@ export default class Navbar extends Vue {
   drawer:boolean = false
 
   menu:Array<any> = [
-    {ruta: '/', nombre: 'Inicio', icono:'mdi-folder'},
-    {ruta: '/about', nombre: 'About', icono:'mdi-folder'},
+    {ruta: '/', nombre: 'Inicio', icono:'mdi-home'},
+    {ruta: '/docs', nombre: 'Documentos', icono:'mdi-folder'},
   ]
 
-  variaboeRandom:string = ''
+  variaboeRandom:string = ''  
 }
 </script>
 <style>
