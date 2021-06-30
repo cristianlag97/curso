@@ -1,11 +1,12 @@
 from django.db import router
 from django.urls import path, include
 from rest_framework import routers
-from .views import DocumentoViewset
+from .views import *
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 router = routers.DefaultRouter()
 router.register('docs', DocumentoViewset)
+router.register('categoria', CategoriaViewset)
 
 
 urlpatterns = [

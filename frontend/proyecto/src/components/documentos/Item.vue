@@ -57,14 +57,14 @@ export default class Item extends Vue {
 
   faltan(f){
     let vence = moment(f)
-    const hoy = moment(Date.now())
-    const annios = vence.diff(hoy, 'year')
-    hoy.add(annios, "years")
-    const meses = vence.diff(hoy, 'months')
-    hoy.add(meses, "mounths")
-    const dias = vence.diff(hoy, 'days')
-    hoy.add(dias, "days")
-    const rs = annios + ' años ' + meses + ' meses ' + dias + ' dias'
+      const hoy = moment(Date.now())
+      const annios = vence.diff(hoy, 'year')
+      hoy.add(annios, "years")
+      const meses = vence.diff(hoy, 'months')
+      hoy.add(meses, "mounths")
+      const dias = vence.diff(hoy, 'days')
+      hoy.add(dias, "days")
+      const rs = annios + ' años ' + meses + ' meses ' + dias + ' dias'
     return this.expirado(f)
       ? "Expiró hace " + rs.replace(/-/g, "")
       :"Faltan: " + rs

@@ -71,6 +71,7 @@ export default class Navbar extends Vue {
   menu:Array<any> = [
     {ruta: '/', nombre: 'Inicio', icono:'mdi-home'},
     {ruta: '/docs', nombre: 'Documentos', icono:'mdi-folder'},
+    {ruta: '/principal', nombre: 'Sistema', icono:'mdi-storefront-outline'},
   ]
 
   variaboeRandom:string = ''  
