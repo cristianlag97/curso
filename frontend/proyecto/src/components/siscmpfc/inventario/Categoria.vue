@@ -22,6 +22,7 @@
                 ></v-text-field>
                 <v-spacer></v-spacer>
                 <v-btn color="warning" dark class="mb-2" @click="iniciar"><v-icon>mdi-cached</v-icon></v-btn>
+                <v-btn color="primary" dark class="mb-2" @click="abrirModal"><v-icon>mdi-plus-thick</v-icon></v-btn>
               </v-toolbar>
             </template>
             <template v-slot:no-datañ>
@@ -30,17 +31,19 @@
           </v-data-table>
         </v-col>
       </v-row>
+      <Modal ref="modal"/>
     </v-container>
   </div>
 </template>
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import {ApiInv} from './ApiInv';
+import Modal from './Modal.vue'
 
 
 @Component({
   components:{
-    
+    Modal
   }
 })
 export default class Categoria extends Vue {
@@ -54,6 +57,7 @@ export default class Categoria extends Vue {
     {text: 'Descripcion', sortable: true, value: 'descripcion'}
   ]
 
+
   async iniciar(){
     try{
       this.loading = true
@@ -65,10 +69,13 @@ export default class Categoria extends Vue {
       this.loading = false
     }
   }
+  abrirModal(){
+    this.$refs.modal.show()
+  }
   //se ejecuta cuando se crea el componente
   created() {
     this.iniciar()
   }
-    
+
 }
 </script>

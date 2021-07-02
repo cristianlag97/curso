@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-alert 
+    <v-alert
       v-model="mensaje.mostrar"
       dismissible
       close-icon="mdi-delete"

@@ -56,6 +56,6 @@ export default class Inventario extends Vue {
   chooseOpt(opt){
     this.opt = opt
   }
-    
+
 }
 </script>

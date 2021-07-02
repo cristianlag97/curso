@@ -31,9 +31,9 @@ export default class Api{
 
   async save(nombre:string, obj:any){
     let url = this.SERVER_URL + nombre + "/"
-    
+
     console.log(obj, 'Esto se pasa en save()');
-    
+
     if(obj.id !== -1){
       url += obj.id + "/"
       let r = await axios.put(url)

@@ -55,11 +55,11 @@ import Buscador from './Buscador.vue'
   }
 })
 export default class Pixabai extends Vue {
-            
+
   //data
-  pixaImagen:Array<any> = [] 
+  pixaImagen:Array<any> = []
   buscar:string = ''
-  
+
   currentPage:number=1
   rows:number=1
   perPage:number=20
