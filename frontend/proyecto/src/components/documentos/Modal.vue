@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-dialog 
+    <v-dialog
       v-model="mostrarModal"
       persistent
       transition="dialog-bottom-transition"

@@ -26,5 +26,9 @@ export default class Docs extends Vue {
   get allItems(){
     return this.$store.state.items
   }
+
+  // created(){
+  //   console.log(this.$store.state.items)
+  // }
 }
 </script>

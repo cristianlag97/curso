@@ -28,8 +28,8 @@ export default new Vuex.Store({
     async setItems(state){
       try {
         this.commit("mostrarLoading", "Cargando datos")
-        let item = await api.getAll()
-        state.items = item
+        const item = await api.getAll()
+        state.items = item.results
         if(typeof(items)== 'string'){
           this.commit('mensaje', items)
         }
@@ -42,8 +42,8 @@ export default new Vuex.Store({
     async insertDoc(state, doc){
       let r = await api.insert(doc)
       this.commit('mensaje', 'Registro guardado correctamente')
-      let items = await api.getAll()
-      state.items = items
+      const items = await api.getAll()
+      state.items = items.results
     },
 
     async actualizarDoc(state, doc) {

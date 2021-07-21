@@ -11,7 +11,7 @@
           elevate-on-scroll
         >
           <v-app-bar-nav-icon></v-app-bar-nav-icon>
-          <v-toolbar-title>Modulo de Inventario</v-toolbar-title>
+          <v-toolbar-title>Modulo de Compras</v-toolbar-title>
 
           <v-spacer></v-spacer>
           <v-btn icon @click="chooseOpt(1)">
@@ -19,9 +19,6 @@
           </v-btn>
           <v-btn icon @click="chooseOpt(2)">
             <v-icon>mdi-view-list-outline</v-icon>
-          </v-btn>
-          <v-btn icon @click="chooseOpt(3)">
-            <v-icon>mdi-view-comfy</v-icon>
           </v-btn>
         </v-app-bar>
         <v-sheet id="scrolling-techniques-6" class="overflow-y-auto" max-height="600">
@@ -31,25 +28,21 @@
     </v-row>
     <v-row>
       <v-col>
-        <Categoria v-if="opt===1"/>
-        <SubCategoria v-if="opt===2"/>
-        <Producto v-if="opt===3" />
+        <Proveedores v-if="opt===1"/>
+        <Comprar v-if="opt===2"/>
       </v-col>
     </v-row>
   </div>
 </template>
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import Categoria from './Categoria.vue'
-import SubCategoria from './SubCategoria.vue'
-import Producto from './Producto.vue'
-
+import Proveedores from './Proveedores.vue'
+import Comprar from './Comprar.vue'
 
 @Component({
   components:{
-    Categoria,
-    SubCategoria,
-    Producto
+    Proveedores,
+    Comprar
   }
 })
 export default class Inventario extends Vue {

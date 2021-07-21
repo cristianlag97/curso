@@ -1,5 +1,12 @@
 from django.db import models
 
+class ModeloEdit(models.Model):
+  fecha_creacion = models.DateField(auto_now_add=True)# solo se efectua cuando se crea
+  fecha_modificacion = models.DateField(auto_now = True)#se efecxtua en cada cambio que se haga
+
+  class Meta:
+    abstract = True
+
 class Documento(models.Model):
   nombre    = models.CharField(max_length=50, null=False, blank= False, unique=True)
   expira    = models.DateField()
@@ -51,7 +58,7 @@ class Producto(models.Model):
   descripcion = models.CharField(max_length=50, null=False, blank=False)
   exitencias = models.IntegerField(default=0)
   precio = models.FloatField(default=0)
-  subCategoria = models.ForeignKey('SubCategoria', on_delete=models.CASCADE)
+  subcategoria = models.ForeignKey('SubCategoria', on_delete=models.CASCADE)
 
   def __str__(self):
     return self.descripcion
@@ -62,3 +69,49 @@ class Producto(models.Model):
 
   class Meta:
     verbose_name_plural = "Productos"
+
+class Proveedor(models.Model):
+  nombre = models.CharField(max_length = 150, null=False, blank=False, unique=True)
+  telefono = models.CharField(max_length = 20, null=True, blank=True)
+  email = models.TextField(null=True, blank=True)
+
+  def __str__(self):
+    return self.nombre
+
+  def save(self, **kwargs):
+    self.nombre = self.nombre.upper()
+    super(Proveedor, self).save()
+
+  class Meta:
+    verbose_name_plural = "Proveedores"  
+  
+class ComprasEnc(ModeloEdit):
+  proveedor = models.ForeignKey(Proveedor, on_delete=models.CASCADE)
+  fecha = models.DateField(null = False, blank=False)
+
+  def __str__(self):
+    return str(self.id)
+
+  class Meta:
+    verbose_name_plural = "Encabezado de compras"
+
+class ComprasDet(ModeloEdit):
+  cabecera = models.ForeignKey(ComprasEnc, on_delete=models.CASCADE)
+  producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+  cantidad = models.IntegerField(default = 0)
+  precio = models.FloatField(default = 0)
+  descuento = models.FloatField(default = 0)
+  @property
+  def subtotal(self):
+    return self.cantidad * self.precio
+
+  @property
+  def total(self):
+    return self.subtotal - self.descuento
+
+  def __str__(self):
+    return '{} - {} - {}'.format(self.id, self.cabecera, self.producto)
+
+  class Meta:
+    verbose_name_plural = "Detalle de compras"
+  

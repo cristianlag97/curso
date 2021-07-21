@@ -13,7 +13,7 @@
           >
             <template v-slot:top>
               <v-toolbar flat color="white">
-                <v-toolbar-title>Categoría</v-toolbar-title>
+                <v-toolbar-title>Sub-Categoría</v-toolbar-title>
                 <v-divider class="mx-4" inset vertical></v-divider>
                 <v-text-field
                   v-model="search"
@@ -37,10 +37,20 @@
                     <v-card-text>
                       <v-container>
                         <v-row>
-                          <v-col cols="2" sm="2" md="2">
+                          <v-col cols="2">
                             <v-text-field v-model="editedItem.id" label="ID" disabled></v-text-field>
                           </v-col>
-                          <v-col cols="10" sm="10" md="10">
+                          <v-col cols='5'>
+                            <v-autocomplete
+                              v-model="editedItem.categoria"
+                              :items="categorias"
+                              label="Categorías"
+                              item-text="descripcion"
+                              item-value="id"
+                              return-object
+                            ></v-autocomplete>
+                          </v-col>
+                          <v-col cols="5">
                             <v-text-field v-model="editedItem.descripcion" label="Descripción" ></v-text-field>
                           </v-col>
                         </v-row>
@@ -60,12 +70,14 @@
               <v-icon small class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
               <v-icon small class="mr-2" @click="deleteItem(item)">mdi-delete</v-icon>
             </template>
-            <template v-slot:no-datañ>
+            <template v-slot:no-data>
               <v-btn color="primary" @click="iniciar">Reiniciar</v-btn>
             </template>
           </v-data-table>
         </v-col>
       </v-row>
+      <p>DATOS:</p>
+      <p>{{items}}</p>
       <!-- <Modal ref="modal" @iniciar="iniciar" :items="nuevo"/> -->
     </v-container>
   </div>
@@ -81,14 +93,15 @@ import Modal from './Modal.vue'
     Modal
   }
 })
-export default class Categoria extends Vue {
+export default class SubCategoria extends Vue {
 
-  items:Array<any> = []
+  items:Array<object> = []
   api:any = new ApiInv
   loading:boolean = false
   search:string = ''
   headers:Array<any> = [
     {text: 'ID', value:'id'},
+    {text: 'Categoría', sortable: true, value: 'cat_descripcion'},
     {text: 'Descripcion', sortable: true, value: 'descripcion'},
     {text: 'Acciones', value: 'actions', sortable: false}
   ]
@@ -96,27 +109,36 @@ export default class Categoria extends Vue {
   editedIndex:number = -1
   editedItem: object = {
     id:-1,
+    categoria:{id:-1, descripcion:''},
     descripcion: ''
   }
   defaultItem:object = {
     id: -1,
+    categoria:{id:-1, descripcion:''},
     descripcion: ''
   }
 
+  categorias:Array<any> = []
+
   get formTitle(){
-    return (this.editedIndex === -1 ? 'Nueva' : 'Editar') + ' Categoría'
+    return (this.editedIndex === -1 ? 'Nueva' : 'Editar') + ' Sub Categoría'
   }
 
   async iniciar(){
     try{
       this.loading = true
-      const r = await this.api.getCategorias()
+      const r = await this.api.getSubCategorias()
       if (Array.isArray(r) ) {
-        this.items = r.results
+        // this.items = r.results
+        console.log('Holaq')
       }
-      this.items = r.results
+        this.items = r.results
+        console.log(this.items)
+
+      this.categorias = await this.api.getCategorias()
+
     } catch(error){
-      alert('Error')
+      this.$swal('Error', error.toString())
     } finally{
       this.loading = false
     }
@@ -133,14 +155,32 @@ export default class Categoria extends Vue {
   }
 
   async save(){
-    const obj = this.editedItem
+
+    const cp = this.editedItem
+    const cat = cp["categoria"]
+    let idCat = null
+
+    if(cat["id"]!==undefined){
+      idCat = cat["id"]
+    } else{
+      idCat = cat
+    }
+
+    // const obj = this.editedItem
+
+    const obj = {
+      id: cp["id"],
+      categoria: idCat,
+      descripcion: cp["descripcion"]
+    }
+
     try {
       this.loading = true
-      await this.api.saveCategoria(obj)
+      await this.api.saveSubCategoria(obj)
       this.close()
       this.iniciar()
     } catch (error) {
-        alert(error)
+        this.$swal('Error', error.toString())
     }finally{
       this.loading = false
     }
@@ -159,7 +199,7 @@ export default class Categoria extends Vue {
   async deleteItem(item){
     this.$swal({
       title: '¿Estas seguro?',
-      html: `Borrar categoría <br><b>${item.descripcion}</b>`,
+      html: `Borrar subcategoría <br><b>${item.descripcion}</b>`,
       type: 'danger',
       icon:'question',
       showCancelButton: true,
@@ -169,11 +209,11 @@ export default class Categoria extends Vue {
       showLoaderOnConfirm: true
     }).then( async(result) => {
       if(result.value){
-        await this.api.delCategoria(item.id)
+        await this.api.delSubCategoria(item.id)
         this.iniciar()
-        this.$swal("Borrado", "Se borró correctamente la categoría", "success")
+        this.$swal("Borrado", "Se borró correctamente la subcategoria", "success")
       } else {
-        this.$swal("Cancelado", "Se mantiene correctamente la categoría", "info")
+        this.$swal("Cancelado", "Se mantiene correctamente la subcategoria", "info")
       }
     })
       this.iniciar()

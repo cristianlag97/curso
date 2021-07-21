@@ -10,7 +10,7 @@
         <v-tab>Facturación</v-tab>
 
         <v-tab-item><Inventario/></v-tab-item>
-        <v-tab-item>Detalle modulo  compra</v-tab-item>
+        <v-tab-item><Compras/></v-tab-item>
         <v-tab-item>Detalle modulo facturación</v-tab-item>
       </v-tabs>
     </v-card>
@@ -19,10 +19,12 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import Inventario from './inventario/Inventario.vue'
+import Compras from './cmp/Compras.vue'
 
 @Component({
   components:{
-    Inventario
+    Inventario,
+    Compras
   }
 })
 export default class Principal extends Vue {

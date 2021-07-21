@@ -13,7 +13,7 @@
           >
             <template v-slot:top>
               <v-toolbar flat color="white">
-                <v-toolbar-title>Categoría</v-toolbar-title>
+                <v-toolbar-title>Proveedores</v-toolbar-title>
                 <v-divider class="mx-4" inset vertical></v-divider>
                 <v-text-field
                   v-model="search"
@@ -28,30 +28,38 @@
                 <template v-slot:activator="{on, attrs}">
                   <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on"><v-icon>mdi-plus-thick</v-icon></v-btn>
                 </template>
-                  <v-card>
 
-                    <v-card-title primary-title>
-                      <span class="headline">{{ formTitle }}</span>
-                    </v-card-title>
-
-                    <v-card-text>
-                      <v-container>
-                        <v-row>
-                          <v-col cols="2" sm="2" md="2">
-                            <v-text-field v-model="editedItem.id" label="ID" disabled></v-text-field>
-                          </v-col>
-                          <v-col cols="10" sm="10" md="10">
-                            <v-text-field v-model="editedItem.descripcion" label="Descripción" ></v-text-field>
-                          </v-col>
-                        </v-row>
-                      </v-container>
-                    </v-card-text>
-
-                    <v-card-actions>
-                      <v-btn color="blue darken-1" dark text @click="close">Cancelar</v-btn>
-                      <v-btn color="pink accent-3" dark text @click="save">Guardar</v-btn>
-                    </v-card-actions>
-                  </v-card>
+                  <v-form ref="form" v-model="formValido" lazy-validation>
+                    <v-card>
+                      <v-card-title primary-title>
+                        <span class="headline">{{ formTitle }}</span>
+                      </v-card-title>
+                      <v-card-text>
+                        <v-container>
+                          <v-row>
+                            <v-col cols="2" sm="2" md="2">
+                              <v-text-field v-model="editedItem.id" label="ID" disabled></v-text-field>
+                            </v-col>
+                            <v-col cols="10" sm="10" md="10">
+                              <v-text-field v-model="editedItem.nombre" :rules="textRules" label="Nombre" ></v-text-field>
+                            </v-col>
+                          </v-row>
+                          <v-row>
+                            <v-col >
+                              <v-text-field v-model="editedItem.telefono" label="Teléfono" ></v-text-field>
+                            </v-col>
+                            <v-col>
+                              <v-text-field v-model="editedItem.email" :rules="emailRules" label="E-mail" ></v-text-field>
+                            </v-col>
+                          </v-row>
+                        </v-container>
+                      </v-card-text>
+                      <v-card-actions>
+                        <v-btn color="blue darken-1" text @click="close">Cancelar</v-btn>
+                        <v-btn color="pink accent-3" :disabled="!formValido" text @click="save">Guardar</v-btn>
+                      </v-card-actions>
+                    </v-card>
+                  </v-form>
               </v-dialog>
 
               </v-toolbar>
@@ -72,51 +80,67 @@
 </template>
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import {ApiInv} from './ApiInv';
-import Modal from './Modal.vue'
+import {ApiCmp} from './ApiCmp';
 
 
 @Component({
   components:{
-    Modal
   }
 })
-export default class Categoria extends Vue {
+export default class Proveedores extends Vue {
 
   items:Array<any> = []
-  api:any = new ApiInv
+  api:any = new ApiCmp
   loading:boolean = false
   search:string = ''
   headers:Array<any> = [
     {text: 'ID', value:'id'},
-    {text: 'Descripcion', sortable: true, value: 'descripcion'},
+    {text: 'Nombre', sortable: true, value: 'nombre'},
+    {text: 'Teléfono', value: 'telefono', sortable: true},
+    {text: 'E-mail', value: 'email', sortable: false},
     {text: 'Acciones', value: 'actions', sortable: false}
   ]
   dialog:boolean = false
   editedIndex:number = -1
   editedItem: object = {
     id:-1,
-    descripcion: ''
+    nombre: '',
+    telefono: '',
+    email: ''
   }
   defaultItem:object = {
-    id: -1,
-    descripcion: ''
+    id:-1,
+    nombre: '',
+    telefono: '',
+    email: ''
   }
 
+  emailRules:Array<any> = [
+    v => !! v || "E-mail is requerido",
+    v => /.+@+/.test(v) || "E-mail debe ser valido"
+  ]
+
+  textRules:Array<any> = [
+    v => !! v || "requerido"
+  ]
+
+  formValido:boolean = true
+
   get formTitle(){
-    return (this.editedIndex === -1 ? 'Nueva' : 'Editar') + ' Categoría'
+    return (this.editedIndex === -1 ? 'Nuevo' : 'Editar') + ' Proveedor'
   }
 
   async iniciar(){
     try{
       this.loading = true
-      const r = await this.api.getCategorias()
-      if (Array.isArray(r) ) {
-        this.items = r.results
-      }
+      let r = await this.api.getProveedores()
       this.items = r.results
     } catch(error){
-      alert('Error')
+      this.$swal({
+        title: 'Error!',
+        text: error.toString(),
+        icon:'error'
+      })
     } finally{
       this.loading = false
     }
@@ -133,14 +157,33 @@ export default class Categoria extends Vue {
   }
 
   async save(){
+
     const obj = this.editedItem
+
+    if(obj.nombre.length<=3){
+      this.$swal({
+        title: 'Error!',
+        text: "Nombre proveedor debe tener al menos 4 caracteres",
+        icon:'error'
+      })
+      return false
+    }
+
     try {
       this.loading = true
-      await this.api.saveCategoria(obj)
+      await this.api.saveProveedor(obj)
       this.close()
       this.iniciar()
+      this.$swal({
+        text: 'Guardado correctamente',
+        icon:'success'
+      })
     } catch (error) {
-        alert(error)
+      this.$swal({
+        title: 'Error!',
+        text: error.toString(),
+        icon:'error'
+      })
     }finally{
       this.loading = false
     }
@@ -159,7 +202,7 @@ export default class Categoria extends Vue {
   async deleteItem(item){
     this.$swal({
       title: '¿Estas seguro?',
-      html: `Borrar categoría <br><b>${item.descripcion}</b>`,
+      html: `Borrar el proveedor <br><b>${item.nombre}</b>`,
       type: 'danger',
       icon:'question',
       showCancelButton: true,
@@ -169,11 +212,11 @@ export default class Categoria extends Vue {
       showLoaderOnConfirm: true
     }).then( async(result) => {
       if(result.value){
-        await this.api.delCategoria(item.id)
+        await this.api.delProveedor(item.id)
         this.iniciar()
-        this.$swal("Borrado", "Se borró correctamente la categoría", "success")
+        this.$swal("Borrado", "Se borró correctamente el producto", "success")
       } else {
-        this.$swal("Cancelado", "Se mantiene correctamente la categoría", "info")
+        this.$swal("Cancelado", "Se mantiene correctamente el producto", "info")
       }
     })
       this.iniciar()

@@ -1,7 +1,7 @@
 import axios from 'axios'
 export default class Api{
   constructor(){
-    this.SERVER_URL = 'HTTP://127.0.0.1:8000/api/v1/'
+    this.SERVER_URL = 'http://127.0.0.1:8000/api/v1/'
     // this.TOKEN_URL = this.SERVER_URL + 'token'
     // this.USUARIO = 'prueba'
     // this.PASSWORD = '1234567.'
@@ -29,27 +29,30 @@ export default class Api{
     return items.data
   }
 
-  async save(nombre:string, obj:any){
+  async save(nombre:string, obj:object){
     let url = this.SERVER_URL + nombre + "/"
 
-    console.log(obj, 'Esto se pasa en save()');
+    // console.log(obj, 'Esto se pasa en save()');
 
     if(obj.id !== -1){
+      // console.log('Hola estoy dentro de la condición if');
       url += obj.id + "/"
-      let r = await axios.put(url)
-      const result = r.data
+      let r = await axios.put(url, obj)
+      const result = r
       if(result.statusText == 'OK'){
-        console.log('OK');
-        return result
+        // console.log('OK');
+        return result.data
       }else{
         console.log('Error');
       }
-    }else {
-      let r = await axios.post(url)
-      const result = r.data
+    } else {
+      // console.log('Hola estoy dentro de la condición else');
+      let r = await axios.post(url, obj)
+      const result = r
+      // console.log('Hola esto es:', result);
       if(result.statusText == 'Created'){
-        console.log('Created');
-        return result
+        // console.log('Created');
+        return result.data
       }else{
         console.log('Error');
       }

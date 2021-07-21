@@ -53,7 +53,7 @@ export default class Documentos extends Vue {
   name:'Documentos'
 
   //data
-
+  prueba:Array<object> = []
 
   nuevo:object = {
     id: -1,
@@ -96,6 +96,10 @@ export default class Documentos extends Vue {
       alerta3m: true,
       alerta1m: true,
     }
+  }
+
+  created(){
+    this.prueba.push(this.$store.state.items)
   }
 
 }
