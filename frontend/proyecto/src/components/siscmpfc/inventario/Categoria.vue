@@ -83,11 +83,11 @@ import Modal from './Modal.vue'
 })
 export default class Categoria extends Vue {
 
-  items:Array<any> = []
-  api:any = new ApiInv
+  items:Array<object> = []
+  api:object = new ApiInv
   loading:boolean = false
   search:string = ''
-  headers:Array<any> = [
+  headers:Array<object> = [
     {text: 'ID', value:'id'},
     {text: 'Descripcion', sortable: true, value: 'descripcion'},
     {text: 'Acciones', value: 'actions', sortable: false}
@@ -111,9 +111,9 @@ export default class Categoria extends Vue {
     try{
       this.loading = true
       const r = await this.api.getCategorias()
-      if (Array.isArray(r) ) {
-        this.items = r.results
-      }
+      // if (Array.isArray(r) ) {
+      //   // this.items = r.results
+      // }
       this.items = r.results
     } catch(error){
       alert('Error')
@@ -146,7 +146,7 @@ export default class Categoria extends Vue {
     }
   }
 
-  editItem(item){
+  editItem(item:object){
     this.editedIndex = this.items.indexOf(item)
     // this.$refs.modal.show()
     this.editedItem = Object.assign({}, item)
@@ -156,7 +156,7 @@ export default class Categoria extends Vue {
 
 
 
-  async deleteItem(item){
+  async deleteItem(item:object){
     this.$swal({
       title: '¿Estas seguro?',
       html: `Borrar categoría <br><b>${item.descripcion}</b>`,

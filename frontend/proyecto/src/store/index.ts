@@ -1,3 +1,21 @@
+// import { VuexModule, Module, Mutation, Getters } from 'vuex-module-decorators'
+
+// @Module({
+//   namespaced: true
+// })
+// class Foo extends VuexModule {
+
+//   public text: string = 'inside module store'
+//   public items: Array<object> = []
+
+
+//   @Getters
+//   getAllItem(item: object){
+//     return this.items.push(item)
+//   }
+
+// }
+// export default Foo
 import Vue from 'vue'
 import Vuex from 'vuex'
 
@@ -28,10 +46,10 @@ export default new Vuex.Store({
     async setItems(state){
       try {
         this.commit("mostrarLoading", "Cargando datos")
-        const item = await api.getAll()
-        state.items = item.results
-        if(typeof(items)== 'string'){
-          this.commit('mensaje', items)
+        const resul = await api.getAll()
+        state.items = resul.results
+        if(typeof(state.items) === 'string'){
+          this.commit('mensaje', state.items)
         }
         this.commit("ocultarLoading")
       } catch (error) {
@@ -39,25 +57,25 @@ export default new Vuex.Store({
       }
     },
 
-    async insertDoc(state, doc){
+    async insertDoc(state, doc:object){
       let r = await api.insert(doc)
       this.commit('mensaje', 'Registro guardado correctamente')
       const items = await api.getAll()
       state.items = items.results
     },
 
-    async actualizarDoc(state, doc) {
+    async actualizarDoc(state, doc:object) {
       let r = await api.update(doc)
       this.commit('mensaje', 'Registro actualizado correctamente')
       state.items = await api.getAll()
     },
 
-    async borrarDoc(state, doc){
+    async borrarDoc(state, doc:number){
       let r = await api.delete(doc)
       state.items = await api.getAll()
     },
 
-    mostrarLoading(state, payload){
+    mostrarLoading(state, payload:string){
       state.loading.estado = true
       if(payload!==undefined){
         state.loading.titulo = payload
@@ -68,7 +86,7 @@ export default new Vuex.Store({
       state.loading.estado = false
     },
 
-    mensaje(state,payload){
+    mensaje(state, payload:string){
       state.mensaje.mostrar = true
       state.mensaje.texto = payload
     }
@@ -78,3 +96,4 @@ export default new Vuex.Store({
   modules: {
   }
 })
+
