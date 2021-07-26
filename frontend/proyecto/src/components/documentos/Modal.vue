@@ -82,71 +82,74 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import Vue from 'vue'
 
-@Component({
-  components:{
-  }
-})
-export default class Modal extends Vue {
-  @Prop() private item
+export default Vue.extend({
+  props:['item'],
 
-  seleccionarFecha: boolean = false
-  mostrarModal:boolean = false
-  fecha = new Date().toISOString().substr(0, 10)
+  data() {
+    return {
+      seleccionarFecha: false,
+      mostrarModal: false,
+      fecha: new Date().toISOString().substr(0, 10)
+    }
+  },
 
-  get tipo(){
+  mounted() {
     return this.item.id > 0 ? "mdi-pencil" : "mdi-plus"
-  }
+  },
 
-  show(){
-    this.mostrarModal = true
-  }
+  methods: {
+    show(): void{
+      this.mostrarModal = true
+    },
 
-  hidden(){
-    this.mostrarModal = false
-  }
+    hidden(): void{
+      this.mostrarModal = false
+    },
 
-  insert(doc){
-    try {
-      this.$store.commit('mostrarLoading', 'Cargando datos')
-      this.$store.commit('insertDoc', doc)
-    } catch (error) {
-      console.log(error);
-    } finally{
-      this.$store.commit('ocultarLoading')
+    insert(doc): void{
+      try {
+        this.$store.commit('mostrarLoading', 'Cargando datos')
+        this.$store.commit('insertDoc', doc)
+      } catch (error) {
+        console.log(error);
+      } finally{
+        this.$store.commit('ocultarLoading')
 
+      }
+    },
+
+    update(doc): void{
+      try {
+        this.$store.commit('mostrarLoading', 'Cargando datos')
+        this.$store.commit('actualizarDoc', doc)
+      } catch (error) {
+        console.log(error);
+      } finally{
+        this.$store.commit('ocultarLoading')
+
+      }
+    },
+
+    save(){
+      const doc = {
+        id: this.item.id,
+        nombre: this.item.nombre,
+        expira: this.fecha,
+        alerta1y: this.item.alerta1y,
+        alerta6m: this.item.alerta6m,
+        alerta3m: this.item.alerta3m,
+        alerta1m: this.item.alerta1m,
+      }
+      if(this.item.id === -1){
+        this.insert(doc)
+      } else{
+        this.update(doc)
+      }
+      this.hidden()
     }
-  }
+  },
+})
 
-  update(doc){
-    try {
-      this.$store.commit('mostrarLoading', 'Cargando datos')
-      this.$store.commit('actualizarDoc', doc)
-    } catch (error) {
-      console.log(error);
-    } finally{
-      this.$store.commit('ocultarLoading')
-
-    }
-  }
-  save(){
-    const doc = {
-      id: this.item.id,
-      nombre: this.item.nombre,
-      expira: this.fecha,
-      alerta1y: this.item.alerta1y,
-      alerta6m: this.item.alerta6m,
-      alerta3m: this.item.alerta3m,
-      alerta1m: this.item.alerta1m,
-    }
-    if(this.item.id === -1){
-      this.insert(doc)
-    } else{
-      this.update(doc)
-    }
-    this.hidden()
-  }
-
-}
 </script>

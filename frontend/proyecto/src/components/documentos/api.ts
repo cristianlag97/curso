@@ -10,7 +10,7 @@ const credenciales = {"username": USUARIO, "password": PASSWORD}
 // const getToken = async () => {
 //   const r = await axios.post(TOKEN_URL, credenciales)
 //   const token = r
-//   return token 
+//   return token
 // }
 
 // export default{
@@ -27,7 +27,7 @@ export default{
     return res.data
   },
 
-  insert: async (doc:any) => {
+  insert: async (doc:object) => {
     const dato = await axios.post(DOCS_URL, doc)
     if (dato.statusText !== 'OK'){
       return dato.statusText
@@ -35,7 +35,7 @@ export default{
     return dato
   },
 
-  update: async (doc:any) =>  {
+  update: async (doc) =>  {
     const dato = await axios.put(DOCS_URL + doc.id + '/', doc)
     if (dato.statusText !== 'OK'){
       return dato.statusText

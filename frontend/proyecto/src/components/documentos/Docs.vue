@@ -13,22 +13,18 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import Vue from 'vue'
 import Item from './Item.vue'
 
-
-@Component({
+export default Vue.extend({
   components:{
     Item
-  }
+  },
+  computed: {
+    allItems(){
+      return this.$store.state.items
+    }
+  },
 })
-export default class Docs extends Vue {
-  get allItems(){
-    return this.$store.state.items
-  }
 
-  // created(){
-  //   console.log(this.$store.state.items)
-  // }
-}
 </script>

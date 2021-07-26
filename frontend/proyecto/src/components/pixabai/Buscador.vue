@@ -17,15 +17,30 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-@Component
-export default class Buscador extends Vue {
-  //data
-  buscar:string = ''
+import Vue from 'vue';
 
-  buscarHijo(){
-    this.$emit('buscarDesdeHijo', this.buscar)
-    this.buscar = ''
-  }
-}
+export default Vue.extend({
+  data() {
+    return {
+      buscar: '' as string
+    }
+  },
+  methods: {
+    buscarHijo(): void{
+      this.$emit('buscarDesdeHijo', this.buscar)
+      this.buscar = ''
+    }
+  },
+})
+// import { Component, Vue } from 'vue-property-decorator';
+// @Component
+// export default class Buscador extends Vue {
+//   //data
+//   buscar:string = ''
+
+//   buscarHijo(){
+//     this.$emit('buscarDesdeHijo', this.buscar)
+//     this.buscar = ''
+//   }
+// }
 </script>

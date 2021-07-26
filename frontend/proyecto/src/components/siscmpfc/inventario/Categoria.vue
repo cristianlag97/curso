@@ -71,118 +71,115 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import Vue from 'vue'
 import {ApiInv} from './ApiInv';
 import Modal from './Modal.vue'
 
-
-@Component({
+export default Vue.extend({
   components:{
     Modal
-  }
-})
-export default class Categoria extends Vue {
-
-  items:Array<object> = []
-  api:object = new ApiInv
-  loading:boolean = false
-  search:string = ''
-  headers:Array<object> = [
-    {text: 'ID', value:'id'},
-    {text: 'Descripcion', sortable: true, value: 'descripcion'},
-    {text: 'Acciones', value: 'actions', sortable: false}
-  ]
-  dialog:boolean = false
-  editedIndex:number = -1
-  editedItem: object = {
-    id:-1,
-    descripcion: ''
-  }
-  defaultItem:object = {
-    id: -1,
-    descripcion: ''
-  }
-
-  get formTitle(){
-    return (this.editedIndex === -1 ? 'Nueva' : 'Editar') + ' Categoría'
-  }
-
-  async iniciar(){
-    try{
-      this.loading = true
-      const r = await this.api.getCategorias()
-      // if (Array.isArray(r) ) {
-      //   // this.items = r.results
-      // }
-      this.items = r.results
-    } catch(error){
-      alert('Error')
-    } finally{
-      this.loading = false
-    }
-  }
-
-  close(){
-    this.dialog = false
-    // $nextTick = este metodo garantiza que cuando se cierre el modal lo elementos que contiene se actualicen
-    this.$nextTick(() => {
-      // Object.assign = con esto le asignamos al editedItem para poderle asignar el defaultItem es como (a = b)
-      this.editedItem = Object.assign({}, this.defaultItem)
-      this.editedIndex = -1
-    })
-  }
-
-  async save(){
-    const obj = this.editedItem
-    try {
-      this.loading = true
-      await this.api.saveCategoria(obj)
-      this.close()
-      this.iniciar()
-    } catch (error) {
-        alert(error)
-    }finally{
-      this.loading = false
-    }
-  }
-
-  editItem(item:object){
-    this.editedIndex = this.items.indexOf(item)
-    // this.$refs.modal.show()
-    this.editedItem = Object.assign({}, item)
-    this.dialog = true
-
-  }
-
-
-
-  async deleteItem(item:object){
-    this.$swal({
-      title: '¿Estas seguro?',
-      html: `Borrar categoría <br><b>${item.descripcion}</b>`,
-      type: 'danger',
-      icon:'question',
-      showCancelButton: true,
-      confirmButtonText:'si, Borrarlo',
-      cancelButtonText: 'No, mantenerlo',
-      showCloseButton: true,
-      showLoaderOnConfirm: true
-    }).then( async(result) => {
-      if(result.value){
-        await this.api.delCategoria(item.id)
-        this.iniciar()
-        this.$swal("Borrado", "Se borró correctamente la categoría", "success")
-      } else {
-        this.$swal("Cancelado", "Se mantiene correctamente la categoría", "info")
+  },
+  data() {
+    return {
+      items: [] as Array<object>,
+      api: new ApiInv,
+      loading: false as boolean,
+      search: '' as string,
+      headers: [
+        {text: 'ID', value:'id'},
+        {text: 'Descripcion', sortable: true, value: 'descripcion'},
+        {text: 'Acciones', value: 'actions', sortable: false}
+      ] as Array<object>,
+      dialog: false,
+      editedIndex: -1 as number,
+      editedItem: {
+        id:-1,
+        descripcion: ''
+      },
+      defaultItem: {
+        id: -1,
+        descripcion: ''
       }
-    })
-      this.iniciar()
-  }
+    }
+  },
+  computed:{
+    formTitle(){
+      return (this.editedIndex === -1 ? 'Nueva' : 'Editar') + ' Categoría'
+    }
+  },
+  methods: {
+    async iniciar(){
+      try{
+        this.loading = true
+        const r = await this.api.getCategorias()
+        // if (Array.isArray(r) ) {
+        //   // this.items = r.results
+        // }
+        this.items = r.results
+      } catch(error){
+        alert('Error')
+      } finally{
+        this.loading = false
+      }
+    },
 
+    close(): void{
+      this.dialog = false
+      // $nextTick = este metodo garantiza que cuando se cierre el modal lo elementos que contiene se actualicen
+      this.$nextTick(() => {
+        // Object.assign = con esto le asignamos al editedItem para poderle asignar el defaultItem es como (a = b)
+        this.editedItem = Object.assign({}, this.defaultItem)
+        this.editedIndex = -1
+      })
+    },
+
+    async save(){
+      const obj = this.editedItem
+      try {
+        this.loading = true
+        await this.api.saveCategoria(obj)
+        this.close()
+        this.iniciar()
+      } catch (error) {
+          alert(error)
+      }finally{
+        this.loading = false
+      }
+    },
+
+    editItem(item:object): void{
+      this.editedIndex = this.items.indexOf(item)
+      // this.$refs.modal.show()
+      this.editedItem = Object.assign({}, item)
+      this.dialog = true
+    },
+
+    async deleteItem(item){
+      this.$swal({
+        title: '¿Estas seguro?',
+        html: `Borrar categoría <br><b>${item.descripcion}</b>`,
+        type: 'danger',
+        icon:'question',
+        showCancelButton: true,
+        confirmButtonText:'si, Borrarlo',
+        cancelButtonText: 'No, mantenerlo',
+        showCloseButton: true,
+        showLoaderOnConfirm: true
+      }).then( async(result) => {
+        if(result.value){
+          await this.api.delCategoria(item.id)
+          this.iniciar()
+          this.$swal("Borrado", "Se borró correctamente la categoría", "success")
+        } else {
+          this.$swal("Cancelado", "Se mantiene correctamente la categoría", "info")
+        }
+      })
+        this.iniciar()
+    }
+  },
   //se ejecuta cuando se crea el componente
   created() {
     this.iniciar()
-  }
-
-}
+  },
+})
 </script>

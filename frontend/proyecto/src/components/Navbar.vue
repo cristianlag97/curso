@@ -41,7 +41,7 @@
 
       <v-list nav dense>
         <div v-for="m in menu" :key="m.id">
-          <router-link :to="m.ruta">  
+          <router-link :to="m.ruta">
             <v-list-item link>
                 <v-list-item-icon>
                   <v-icon>{{ m.icono }}</v-icon>
@@ -65,7 +65,7 @@ import Navegation from './Navegation.vue'
   }
 })
 export default class Navbar extends Vue {
-  
+
   drawer:boolean = false
 
   menu:Array<any> = [
@@ -74,7 +74,7 @@ export default class Navbar extends Vue {
     {ruta: '/principal', nombre: 'Sistema', icono:'mdi-storefront-outline'},
   ]
 
-  variaboeRandom:string = ''  
+  variaboeRandom:string = ''
 }
 </script>
 <style>

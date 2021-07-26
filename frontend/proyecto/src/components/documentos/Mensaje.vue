@@ -24,15 +24,14 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import Vue from 'vue'
 
-@Component
-export default class Documentos extends Vue {
-  name:'Mensaje'
+export default Vue.extend({
+  name:'Mensaje',
 
-  get mensaje(){
+  mounted() {
     return this.$store.state.mensaje
   }
+})
 
-}
 </script>

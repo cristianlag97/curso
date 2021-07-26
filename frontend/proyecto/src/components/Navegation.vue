@@ -19,7 +19,7 @@
 
       <v-list nav dense>
         <div v-for="m in menu" :key="m.id">
-          <router-link :to="m.ruta">  
+          <router-link :to="m.ruta">
             <v-list-item link>
                 <v-list-item-icon>
                   <v-icon>{{ m.icono }}</v-icon>
@@ -47,7 +47,7 @@ export default class Navbar extends Vue {
   mounted() {
     console.log(this.drawer)
   }
-  
+
 }
 </script>
 <style>

@@ -79,153 +79,148 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import Vue from 'vue';
 import {ApiCmp} from './ApiCmp';
 
-
-@Component({
-  components:{
-  }
-})
-export default class Proveedores extends Vue {
-
-  items:Array<any> = []
-  api:any = new ApiCmp
-  loading:boolean = false
-  search:string = ''
-  headers:Array<any> = [
-    {text: 'ID', value:'id'},
-    {text: 'Nombre', sortable: true, value: 'nombre'},
-    {text: 'Teléfono', value: 'telefono', sortable: true},
-    {text: 'E-mail', value: 'email', sortable: false},
-    {text: 'Acciones', value: 'actions', sortable: false}
-  ]
-  dialog:boolean = false
-  editedIndex:number = -1
-  editedItem: object = {
-    id:-1,
-    nombre: '',
-    telefono: '',
-    email: ''
-  }
-  defaultItem:object = {
-    id:-1,
-    nombre: '',
-    telefono: '',
-    email: ''
-  }
-
-  emailRules:Array<any> = [
-    v => !! v || "E-mail is requerido",
-    v => /.+@+/.test(v) || "E-mail debe ser valido"
-  ]
-
-  textRules:Array<any> = [
-    v => !! v || "requerido"
-  ]
-
-  formValido:boolean = true
-
-  get formTitle(){
-    return (this.editedIndex === -1 ? 'Nuevo' : 'Editar') + ' Proveedor'
-  }
-
-  async iniciar(){
-    try{
-      this.loading = true
-      let r = await this.api.getProveedores()
-      this.items = r.results
-    } catch(error){
-      this.$swal({
-        title: 'Error!',
-        text: error.toString(),
-        icon:'error'
-      })
-    } finally{
-      this.loading = false
+export default Vue.extend({
+  data() {
+    return {
+      items: [],
+      api: new ApiCmp,
+      loading: false,
+      search: '',
+      headers: [
+        {text: 'ID', value:'id'},
+        {text: 'Nombre', sortable: true, value: 'nombre'},
+        {text: 'Teléfono', value: 'telefono', sortable: true},
+        {text: 'E-mail', value: 'email', sortable: false},
+        {text: 'Acciones', value: 'actions', sortable: false}
+      ],
+      dialog: false,
+      editedIndex: -1,
+      editedItem: {
+        id:-1,
+        nombre: '',
+        telefono: '',
+        email: ''
+      },
+      defaultItem: {
+        id:-1,
+        nombre: '',
+        telefono: '',
+        email: ''
+      },
+      emailRules: [
+        v => !! v || "E-mail is requerido",
+        v => /.+@+/.test(v) || "E-mail debe ser valido"
+      ],
+      textRules: [
+        v => !! v || "requerido"
+      ],
+      formValido: true
     }
-  }
+  },
 
-  close(){
-    this.dialog = false
-    // $nextTick = este metodo garantiza que cuando se cierre el modal lo elementos que contiene se actualicen
-    this.$nextTick(() => {
-      // Object.assign = con esto le asignamos al editedItem para poderle asignar el defaultItem es como (a = b)
-      this.editedItem = Object.assign({}, this.defaultItem)
-      this.editedIndex = -1
-    })
-  }
-
-  async save(){
-
-    const obj = this.editedItem
-
-    if(obj.nombre.length<=3){
-      this.$swal({
-        title: 'Error!',
-        text: "Nombre proveedor debe tener al menos 4 caracteres",
-        icon:'error'
-      })
-      return false
+  computed: {
+    formTitle(){
+      return (this.editedIndex === -1 ? 'Nuevo' : 'Editar') + ' Proveedor'
     }
+  },
 
-    try {
-      this.loading = true
-      await this.api.saveProveedor(obj)
-      this.close()
-      this.iniciar()
-      this.$swal({
-        text: 'Guardado correctamente',
-        icon:'success'
-      })
-    } catch (error) {
-      this.$swal({
-        title: 'Error!',
-        text: error.toString(),
-        icon:'error'
-      })
-    }finally{
-      this.loading = false
-    }
-  }
-
-  editItem(item){
-    this.editedIndex = this.items.indexOf(item)
-    // this.$refs.modal.show()
-    this.editedItem = Object.assign({}, item)
-    this.dialog = true
-
-  }
-
-
-
-  async deleteItem(item){
-    this.$swal({
-      title: '¿Estas seguro?',
-      html: `Borrar el proveedor <br><b>${item.nombre}</b>`,
-      type: 'danger',
-      icon:'question',
-      showCancelButton: true,
-      confirmButtonText:'si, Borrarlo',
-      cancelButtonText: 'No, mantenerlo',
-      showCloseButton: true,
-      showLoaderOnConfirm: true
-    }).then( async(result) => {
-      if(result.value){
-        await this.api.delProveedor(item.id)
-        this.iniciar()
-        this.$swal("Borrado", "Se borró correctamente el producto", "success")
-      } else {
-        this.$swal("Cancelado", "Se mantiene correctamente el producto", "info")
+  methods: {
+    async iniciar(){
+      try{
+        this.loading = true
+        let r = await this.api.getProveedores()
+        this.items = r.results
+      } catch(error){
+        this.$swal({
+          title: 'Error!',
+          text: error.toString(),
+          icon:'error'
+        })
+      } finally{
+        this.loading = false
       }
-    })
-      this.iniciar()
-  }
+    },
+
+    close(): void{
+      this.dialog = false
+      // $nextTick = este metodo garantiza que cuando se cierre el modal lo elementos que contiene se actualicen
+      this.$nextTick(() => {
+        // Object.assign = con esto le asignamos al editedItem para poderle asignar el defaultItem es como (a = b)
+        this.editedItem = Object.assign({}, this.defaultItem)
+        this.editedIndex = -1
+      })
+    },
+
+    async save(){
+
+      const obj = this.editedItem
+
+      if(obj.nombre.length<=3){
+        this.$swal({
+          title: 'Error!',
+          text: "Nombre proveedor debe tener al menos 4 caracteres",
+          icon:'error'
+        })
+        return false
+      }
+
+      try {
+        this.loading = true
+        await this.api.saveProveedor(obj)
+        this.close()
+        this.iniciar()
+        this.$swal({
+          text: 'Guardado correctamente',
+          icon:'success'
+        })
+      } catch (error) {
+        this.$swal({
+          title: 'Error!',
+          text: error.toString(),
+          icon:'error'
+        })
+      }finally{
+        this.loading = false
+      }
+    },
+
+    editItem(item): void{
+      this.editedIndex = this.items.indexOf(item)
+      // this.$refs.modal.show()
+      this.editedItem = Object.assign({}, item)
+      this.dialog = true
+    },
+
+    async deleteItem(item){
+      this.$swal({
+        title: '¿Estas seguro?',
+        html: `Borrar el proveedor <br><b>${item.nombre}</b>`,
+        type: 'danger',
+        icon:'question',
+        showCancelButton: true,
+        confirmButtonText:'si, Borrarlo',
+        cancelButtonText: 'No, mantenerlo',
+        showCloseButton: true,
+        showLoaderOnConfirm: true
+      }).then( async(result) => {
+        if(result.value){
+          await this.api.delProveedor(item.id)
+          this.iniciar()
+          this.$swal("Borrado", "Se borró correctamente el producto", "success")
+        } else {
+          this.$swal("Cancelado", "Se mantiene correctamente el producto", "info")
+        }
+      })
+        this.iniciar()
+    }
+  },
 
   //se ejecuta cuando se crea el componente
   created() {
     this.iniciar()
   }
-
-}
+})
 </script>

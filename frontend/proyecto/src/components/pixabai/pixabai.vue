@@ -43,47 +43,82 @@
   </v-container>
 </template>
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import ServicioApi from './ServicioApi'
-import Imagen from './Imagen.vue'
-import Buscador from './Buscador.vue'
+import Vue from 'vue';
+import ServicioApi from './ServicioApi';
+import Imagen from './Imagen.vue';
+import Buscador from './Buscador.vue';
 
-@Component({
+export default Vue.extend ({
   components:{
     Imagen,
     Buscador
-  }
-})
-export default class Pixabai extends Vue {
-
-  //data
-  pixaImagen:Array<any> = []
-  buscar:string = ''
-
-  currentPage:number=1
-  rows:number=1
-  perPage:number=20
-
-  //methods
-  async buscarImagen(){
-    // this.buscar = buscar
-    const consulta = await ServicioApi.getImagines(this.buscar, this.currentPage)
-    this.pixaImagen = consulta.hits
-    // console.log(consulta);
-    // this.buscar = ''
-    this.rows = consulta.total / this.perPage
-  }
-
-  realizaBusqueda(buscar:string=""){
-    this.buscar = buscar
-    this.buscarImagen()
-    this.currentPage = 1
-  }
-
+  },
+  data() {
+    return {
+      pixaImagen:[] as Array<object>,
+      buscar: '' as string,
+      currentPage: 1 as number,
+      rows: 1,
+      perPage: 20
+    }
+  },
+  methods: {
+    async buscarImagen(){
+      // this.buscar = buscar
+      const consulta = await ServicioApi.getImagines(this.buscar, this.currentPage)
+      this.pixaImagen = consulta.hits
+      // console.log(consulta);
+      // this.buscar = ''
+      this.rows = consulta.total / this.perPage
+    },
+    realizaBusqueda(buscar:string=""){
+      this.buscar = buscar
+      this.buscarImagen()
+      this.currentPage = 1
+    }
+  },
   async mounted() {
     this.buscarImagen()
-  }
-}
+  },
+})
+
+// import { Component, Vue } from 'vue-property-decorator';
+// @Component({
+//   components:{
+//     Imagen,
+//     Buscador
+//   }
+// })
+// export default class Pixabai extends Vue {
+
+//   //data
+//   pixaImagen:Array<any> = []
+//   buscar:string = ''
+
+//   currentPage:number=1
+//   rows:number=1
+//   perPage:number=20
+
+//   //methods
+//   async buscarImagen(){
+//     // this.buscar = buscar
+//     const consulta = await ServicioApi.getImagines(this.buscar, this.currentPage)
+//     this.pixaImagen = consulta.hits
+//     // console.log(consulta);
+//     // this.buscar = ''
+//     this.rows = consulta.total / this.perPage
+//   }
+
+//   realizaBusqueda(buscar:string=""){
+//     this.buscar = buscar
+//     this.buscarImagen()
+//     this.currentPage = 1
+//   }
+
+//   async mounted() {
+//     this.buscarImagen()
+//   }
+// }
 </script>
 
 <style>

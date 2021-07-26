@@ -33,17 +33,28 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import Vue from 'vue';
+// import { Component, Prop, Vue } from 'vue-property-decorator';
 
-@Component
-export default class Imagen extends Vue {
-  @Prop() private dialog
-  @Prop() private img
+export default Vue.extend({
+  props: [
+    "img", "dialog"
+  ],
+  methods: {
+    closeModal(): void{
+      this.dialog = !this.dialog
+    }
+  },
+})
+// @Component
+// export default class Imagen extends Vue {
+//   @Prop() private dialog:boolean
+//   @Prop() private img:object
 
-  valor:boolean = this.dialog
+//   valor:boolean = this.dialog
 
-  closeModal(){
-    this.dialog = !this.dialog
-  }
-}
+//   closeModal(){
+//     this.dialog = !this.dialog
+//   }
+// }
 </script>

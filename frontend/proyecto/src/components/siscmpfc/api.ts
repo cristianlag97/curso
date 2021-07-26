@@ -1,5 +1,6 @@
 import axios from 'axios'
 export default class Api{
+  SERVER_URL:string = ''
   constructor(){
     this.SERVER_URL = 'http://127.0.0.1:8000/api/v1/'
     // this.TOKEN_URL = this.SERVER_URL + 'token'
@@ -29,7 +30,7 @@ export default class Api{
     return items.data
   }
 
-  async save(nombre:string, obj:object){
+  async save(nombre:string, obj){
     let url = this.SERVER_URL + nombre + "/"
 
     // console.log(obj, 'Esto se pasa en save()');

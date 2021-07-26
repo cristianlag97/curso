@@ -39,27 +39,28 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import Vue from 'vue'
 import Categoria from './Categoria.vue'
 import SubCategoria from './SubCategoria.vue'
 import Producto from './Producto.vue'
 
-
-@Component({
+export default Vue.extend({
   components:{
     Categoria,
     SubCategoria,
     Producto
-  }
+  },
+  data() {
+    return {
+      collapseOnScroll: true,
+      opt:null
+    }
+  },
+  methods: {
+    chooseOpt(opt){
+      this.opt = opt
+    }
+  },
 })
-export default class Inventario extends Vue {
 
-  collapseOnScroll:boolean = true
-  opt:any=null
-
-  chooseOpt(opt){
-    this.opt = opt
-  }
-
-}
 </script>

@@ -83,146 +83,148 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import Vue from 'vue'
 import {ApiInv} from './ApiInv';
 import Modal from './Modal.vue'
 
-
-@Component({
+export default Vue.extend({
   components:{
     Modal
-  }
-})
-export default class SubCategoria extends Vue {
+  },
 
-  items:Array<object> = []
-  api:any = new ApiInv
-  loading:boolean = false
-  search:string = ''
-  headers:Array<any> = [
-    {text: 'ID', value:'id'},
-    {text: 'Categoría', sortable: true, value: 'cat_descripcion'},
-    {text: 'Descripcion', sortable: true, value: 'descripcion'},
-    {text: 'Acciones', value: 'actions', sortable: false}
-  ]
-  dialog:boolean = false
-  editedIndex:number = -1
-  editedItem: object = {
-    id:-1,
-    categoria:{id:-1, descripcion:''},
-    descripcion: ''
-  }
-  defaultItem:object = {
-    id: -1,
-    categoria:{id:-1, descripcion:''},
-    descripcion: ''
-  }
-
-  categorias:Array<any> = []
-
-  get formTitle(){
-    return (this.editedIndex === -1 ? 'Nueva' : 'Editar') + ' Sub Categoría'
-  }
-
-  async iniciar(){
-    try{
-      this.loading = true
-      const r = await this.api.getSubCategorias()
-      if (Array.isArray(r) ) {
-        // this.items = r.results
-        console.log('Holaq')
-      }
-        this.items = r.results
-        console.log(this.items)
-
-      this.categorias = await this.api.getCategorias()
-
-    } catch(error){
-      this.$swal('Error', error.toString())
-    } finally{
-      this.loading = false
+  data() {
+    return {
+      items: [],
+      api: new ApiInv,
+      loading: false,
+      search: '',
+      headers: [
+        {text: 'ID', value:'id'},
+        {text: 'Categoría', sortable: true, value: 'cat_descripcion'},
+        {text: 'Descripcion', sortable: true, value: 'descripcion'},
+        {text: 'Acciones', value: 'actions', sortable: false}
+      ],
+      dialog: false,
+      editedIndex: -1,
+      editedItem: {
+        id:-1,
+        categoria:{id:-1, descripcion:''},
+        descripcion: ''
+      },
+      defaultItem: {
+        id: -1,
+        categoria:{id:-1, descripcion:''},
+        descripcion: ''
+      },
+      categorias: []
     }
-  }
+  },
 
-  close(){
-    this.dialog = false
-    // $nextTick = este metodo garantiza que cuando se cierre el modal lo elementos que contiene se actualicen
-    this.$nextTick(() => {
-      // Object.assign = con esto le asignamos al editedItem para poderle asignar el defaultItem es como (a = b)
-      this.editedItem = Object.assign({}, this.defaultItem)
-      this.editedIndex = -1
-    })
-  }
-
-  async save(){
-
-    const cp = this.editedItem
-    const cat = cp["categoria"]
-    let idCat = null
-
-    if(cat["id"]!==undefined){
-      idCat = cat["id"]
-    } else{
-      idCat = cat
+  computed: {
+    formTitle(){
+      return (this.editedIndex === -1 ? 'Nueva' : 'Editar') + ' Sub Categoría'
     }
+  },
 
-    // const obj = this.editedItem
+  methods: {
+    async iniciar(){
+      try{
+        this.loading = true
+        const r = await this.api.getSubCategorias()
+        if (Array.isArray(r) ) {
+          // this.items = r.results
+          console.log('Holaq')
+        }
+          this.items = r.results
+          console.log(this.items)
 
-    const obj = {
-      id: cp["id"],
-      categoria: idCat,
-      descripcion: cp["descripcion"]
-    }
+        this.categorias = await this.api.getCategorias()
 
-    try {
-      this.loading = true
-      await this.api.saveSubCategoria(obj)
-      this.close()
-      this.iniciar()
-    } catch (error) {
+      } catch(error){
         this.$swal('Error', error.toString())
-    }finally{
-      this.loading = false
-    }
-  }
-
-  editItem(item){
-    this.editedIndex = this.items.indexOf(item)
-    // this.$refs.modal.show()
-    this.editedItem = Object.assign({}, item)
-    this.dialog = true
-
-  }
-
-
-
-  async deleteItem(item){
-    this.$swal({
-      title: '¿Estas seguro?',
-      html: `Borrar subcategoría <br><b>${item.descripcion}</b>`,
-      type: 'danger',
-      icon:'question',
-      showCancelButton: true,
-      confirmButtonText:'si, Borrarlo',
-      cancelButtonText: 'No, mantenerlo',
-      showCloseButton: true,
-      showLoaderOnConfirm: true
-    }).then( async(result) => {
-      if(result.value){
-        await this.api.delSubCategoria(item.id)
-        this.iniciar()
-        this.$swal("Borrado", "Se borró correctamente la subcategoria", "success")
-      } else {
-        this.$swal("Cancelado", "Se mantiene correctamente la subcategoria", "info")
+      } finally{
+        this.loading = false
       }
-    })
-      this.iniciar()
-  }
+    },
 
-  //se ejecuta cuando se crea el componente
+    close(): void{
+      this.dialog = false
+      // $nextTick = este metodo garantiza que cuando se cierre el modal lo elementos que contiene se actualicen
+      this.$nextTick(() => {
+        // Object.assign = con esto le asignamos al editedItem para poderle asignar el defaultItem es como (a = b)
+        this.editedItem = Object.assign({}, this.defaultItem)
+        this.editedIndex = -1
+      })
+    },
+
+    async save(){
+
+      const cp = this.editedItem
+      const cat = cp["categoria"]
+      let idCat = null
+
+      if(cat["id"]!==undefined){
+        idCat = cat["id"]
+      } else{
+        idCat = cat
+      }
+
+      // const obj = this.editedItem
+
+      const obj = {
+        id: cp["id"],
+        categoria: idCat,
+        descripcion: cp["descripcion"]
+      }
+
+      try {
+        this.loading = true
+        await this.api.saveSubCategoria(obj)
+        this.close()
+        this.iniciar()
+      } catch (error) {
+          this.$swal('Error', error.toString())
+      }finally{
+        this.loading = false
+      }
+    },
+
+    editItem(item): void{
+      this.editedIndex = this.items.indexOf(item)
+      // this.$refs.modal.show()
+      this.editedItem = Object.assign({}, item)
+      this.dialog = true
+
+    },
+
+    async deleteItem(item){
+      this.$swal({
+        title: '¿Estas seguro?',
+        html: `Borrar subcategoría <br><b>${item.descripcion}</b>`,
+        type: 'danger',
+        icon:'question',
+        showCancelButton: true,
+        confirmButtonText:'si, Borrarlo',
+        cancelButtonText: 'No, mantenerlo',
+        showCloseButton: true,
+        showLoaderOnConfirm: true
+      }).then( async(result) => {
+        if(result.value){
+          await this.api.delSubCategoria(item.id)
+          this.iniciar()
+          this.$swal("Borrado", "Se borró correctamente la subcategoria", "success")
+        } else {
+          this.$swal("Cancelado", "Se mantiene correctamente la subcategoria", "info")
+        }
+      })
+        this.iniciar()
+    }
+  },
+
+   //se ejecuta cuando se crea el componente
   created() {
     this.iniciar()
   }
+})
 
-}
 </script>

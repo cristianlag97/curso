@@ -52,21 +52,41 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import Vue from 'vue'
 import Modal from './Modal.vue'
 
-@Component({
-  components:{
+export default Vue.extend({
+  components: {
     Modal
-  }
+  },
+  props:[
+    'img'
+  ],
+  data() {
+    return {
+      dialog: false as boolean
+    }
+  },
+  methods: {
+    showModal(): void{
+      this.dialog = true
+    }
+  },
 })
-export default class Imagen extends Vue {
-  @Prop() private img
 
-  dialog:boolean = false
+// import { Component, Prop, Vue } from 'vue-property-decorator';
+// @Component({
+//   components:{
+//     Modal
+//   }
+// })
+// export default class Imagen extends Vue {
+//   @Prop() private img
 
-  showModal(){
-    this.dialog = true
-  }
-}
+//   dialog:boolean = false
+
+//   showModal(){
+//     this.dialog = true
+//   }
+// }
 </script>

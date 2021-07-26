@@ -36,35 +36,32 @@
   </v-app>
 </template>
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import Vue from 'vue'
 import Mensaje from './Mensaje.vue'
 import Docs from './Docs.vue'
 import Modal from './Modal.vue'
 
-
-@Component({
+export default Vue.extend({
   components:{
     Mensaje,
     Docs,
     Modal
-  }
-})
-export default class Documentos extends Vue {
-  name:'Documentos'
-
-  //data
-  prueba:Array<object> = []
-
-  nuevo:object = {
-    id: -1,
-    nombre: 'Nuevo documento',
-    expira: '',
-    alerta1y: true,
-    alerta6m: true,
-    alerta3m: true,
-    alerta1m: true,
-  }
-  items:Array<any> = []
+  },
+  data() {
+    return {
+      prueba: [],
+      nuevo: {
+        id: -1,
+        nombre: 'Nuevo documento',
+        expira: '',
+        alerta1y: true,
+        alerta6m: true,
+        alerta3m: true,
+        alerta1m: true,
+      },
+      items: []
+    }
+  },
 
   mounted() {
     try {
@@ -75,32 +72,35 @@ export default class Documentos extends Vue {
     }// finally{
     //   this.$store.commit("ocultarLoading")
     // }
-  }
+  },
 
-  get allItems(){
+  computed: {
+    allItems(){
     return this.$store.state.items
-  }
+    },
 
-  get loading(){
-    return this.$store.state.loading
-  }
-
-  abrirModal(){
-    this.$refs.modal.show()
-    this.nuevo = {
-      id: -1,
-      nombre: 'Nuevo documento',
-      expira: '',
-      alerta1y: true,
-      alerta6m: true,
-      alerta3m: true,
-      alerta1m: true,
+    loading(){
+      return this.$store.state.loading
     }
-  }
+  },
 
-  created(){
+  methods: {
+    abrirModal(){
+      this.$refs.modal.show()
+      this.nuevo = {
+        id: -1,
+        nombre: 'Nuevo documento',
+        expira: '',
+        alerta1y: true,
+        alerta6m: true,
+        alerta3m: true,
+        alerta1m: true,
+      }
+    }
+  },
+
+  created() {
     this.prueba.push(this.$store.state.items)
-  }
-
-}
+  },
+})
 </script>

@@ -116,92 +116,90 @@
   </v-app>
 </template>
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import Vue from 'vue'
 import {ApiCmp} from './ApiCmp'
 import {ApiInv} from '../inventario/ApiInv'
 
-@Component({
-  components:{
-  }
-})
-export default class Comprar extends Vue {
+export default Vue.extend({
+  data() {
+    return {
+      hoy: new Date().getFullYear() + "-" + (new  Date().getMonth() + 1) + "-" + new  Date().getDate(),
+      loading: false,
+      formValido: true,
+      dialogFecha: false,
+      search:'',
+      headers: [
+        {text: 'ID', value: 'id'},
+        {text: 'Producto', sortable: true, value: 'producto_descripcion'},
+        {text: 'Cantidad', sortable: true , value: 'cantidad'},
+        {text: 'Precio', sortable: false, value: 'precio'},
+        {text: 'Sub total', sortable: false, value: 'subtotal'},
+        {text: 'Descuento', sortable: false, value: 'descuento'},
+        {text: 'Total', sortable: false, value: 'total'},
+        {text: 'Acciones', sortable: false, value: 'antions'}
+      ],
+      textRules: [
+        v => !! v || "requerido"
+      ],
+      detalle: [],
+      productos: [],
+      proveedores: [],
+      editedEnc: {
+        id: -1,
+        proveedor:{
+          id:-1,
+          nombre:''
+        },
+        fecha: new Date().getFullYear() + "-" + (new  Date().getMonth() + 1) + "-" + new  Date().getDate()
+      },
+      editedDetalle: {
+        id: -1,
+        cabecera: -1,
+        producto: -1,
+        cantidad: 0,
+        precio: 0,
+        subtotal: 0,
+        descuento: 0,
+        total: 0
+      },
+      api: new ApiCmp,
+      apiInv: new ApiInv
+    }
+  },
 
-  hoy:string = new Date().getFullYear() + "-" + (new  Date().getMonth() + 1) + "-" + new  Date().getDate()
-  loading:boolean = false
-  formValido:boolean = true
-  dialogFecha: boolean = false
-  search:string = ''
-  headers:Array<object> = [
-    {text: 'ID', value: 'id'},
-    {text: 'Producto', sortable: true, value: 'producto_descripcion'},
-    {text: 'Cantidad', sortable: true , value: 'cantidad'},
-    {text: 'Precio', sortable: false, value: 'precio'},
-    {text: 'Sub total', sortable: false, value: 'subtotal'},
-    {text: 'Descuento', sortable: false, value: 'descuento'},
-    {text: 'Total', sortable: false, value: 'total'},
-    {text: 'Acciones', sortable: false, value: 'antions'}
-  ]
-  textRules:Array<object> = [
-    v => !! v || "requerido"
-  ]
-
-  detalle:Array<object> = []
-  productos:Array<object> = []
-  proveedores:Array<object> = []
-
-  editedEnc:object = {
-    id: -1,
-    proveedor:{
-      id:-1,
-      nombre:''
+  methods: {
+    async iniciar(){
+      this.loading = true
+      const r = await this.api.getProveedores()
+      this.proveedores = r.results
+      const productos = await this.apiInv.getProductos()
+      this.productos = productos.results
+      this.loading = false
     },
-    fecha: new Date().getFullYear() + "-" + (new  Date().getMonth() + 1) + "-" + new  Date().getDate()
-  }
-  editedDetalle:object = {
-    id: -1,
-    cabecera: -1,
-    producto: -1,
-    cantidad: 0,
-    precio: 0,
-    subtotal: 0,
-    descuento: 0,
-    total: 0
-  }
-  api:object = new ApiCmp
-  apiInv:object = new ApiInv
 
+    save(){
+      if(!this.$refs.form.validate()){
+        return false
+      }
 
-  async iniciar(){
-    this.loading = true
-    const r = await this.api.getProveedores()
-    this.proveedores = r.results
-    const productos = await this.apiInv.getProductos()
-    this.productos = productos.results
-    this.loading = false
-  }
+      const enc = this.editedEnc
+      const det = this.editedDetalle
 
-  save(){
-    if(!this.$refs.form.validate()){
-      return false
+      if(enc.proveedor.id === -1){
+        alert('Proveedor requerido')
+        return false
+      }
+
+      if(det.producto === -1){
+        alert('Producto requerido')
+        return false
+      }
     }
-
-    const enc = this.editedEnc
-    const det = this.editedDetalle
-
-    if(enc.proveedor.id === -1){
-      alert('Proveedor requerido')
-      return false
-    }
-
-    if(det.producto === -1){
-      alert('Producto requerido')
-      return false
-    }
-  }
+  },
 
   created(){
     this.iniciar()
   }
+})
 
-}
 </script>

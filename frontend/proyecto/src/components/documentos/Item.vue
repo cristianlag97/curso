@@ -25,55 +25,53 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import Vue from 'vue'
 import moment from 'moment'
 import Modal from './Modal.vue'
 
-@Component({
+export default Vue.extend({
   components:{
     Modal
-  }
-})
-export default class Item extends Vue {
-  @Prop() private item: any
-  @Prop() private items: any
+  },
 
-  borrarDocumento(){
-    let id = this.item.id
-    try {
-      this.$store.commit('mostrarLoading', 'Cargando item')
-      this.$store.commit('borrarDoc', this.item.id)
-      this.$store.commit('setItems')
-    } catch (error) {
-      console.log(error);
-    } finally{
-      this.$store.commit('ocultarLoading')
+  props: ['item', 'items'],
+
+  methods: {
+    borrarDocumento(): void{
+      let id = this.item.id
+      try {
+        this.$store.commit('mostrarLoading', 'Cargando item')
+        this.$store.commit('borrarDoc', this.item.id)
+        this.$store.commit('setItems')
+      } catch (error) {
+        console.log(error);
+      } finally{
+        this.$store.commit('ocultarLoading')
+      }
+    },
+
+    expirado(f){
+      return Date.parse(f) <= Date.now() ? true: false
+    },
+
+    faltan(f){
+      let vence = moment(f)
+        const hoy = moment(Date.now())
+        const annios = vence.diff(hoy, 'year')
+        hoy.add(annios, "years")
+        const meses = vence.diff(hoy, 'months')
+        hoy.add(meses,"months");
+        const dias = vence.diff(hoy, 'days')
+        hoy.add(dias, "days")
+        const rs = annios + ' años ' + meses + ' meses ' + dias + ' dias'
+        return this.expirado(f)
+          ? "Expiró hace " + rs.replace(/-/g, "")
+          :"Faltan: " + rs
+    },
+
+    abrirModal(): void{
+      this.$refs.modal.show()
     }
-  }
-
-  expirado(f){
-    return Date.parse(f) <= Date.now() ? true: false
-  }
-
-  faltan(f){
-    let vence = moment(f)
-      const hoy = moment(Date.now())
-      const annios = vence.diff(hoy, 'year')
-      hoy.add(annios, "years")
-      const meses = vence.diff(hoy, 'months')
-      hoy.add(meses, "mounths")
-      const dias = vence.diff(hoy, 'days')
-      hoy.add(dias, "days")
-      const rs = annios + ' años ' + meses + ' meses ' + dias + ' dias'
-    return this.expirado(f)
-      ? "Expiró hace " + rs.replace(/-/g, "")
-      :"Faltan: " + rs
-
-  }
-
-  abrirModal(){
-    this.$refs.modal.show()
-  }
-
-}
+  },
+})
 </script>
