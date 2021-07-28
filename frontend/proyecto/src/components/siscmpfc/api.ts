@@ -15,7 +15,7 @@ export default class Api{
   //   return token.data
   // }
 
-  async get(nombre:string, id:number){
+  async get(nombre, id){
     let url = this.SERVER_URL + nombre + "/"
     if(id !== -1){
       url += id + "/"

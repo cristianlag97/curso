@@ -74,8 +74,10 @@
 import Vue from 'vue'
 import {ApiInv} from './ApiInv';
 import Modal from './Modal.vue'
+import mensaje from '../../../mixins/Mensajes'
 
 export default Vue.extend({
+  mixins:[mensaje],
   components:{
     Modal
   },
@@ -117,7 +119,7 @@ export default Vue.extend({
         // }
         this.items = r.results
       } catch(error){
-        alert('Error')
+        this.mensaje(error, 'Error', 'error')
       } finally{
         this.loading = false
       }
@@ -139,9 +141,11 @@ export default Vue.extend({
         this.loading = true
         await this.api.saveCategoria(obj)
         this.close()
+        this.mensaje("Guardado satisfactoriamente")
         this.iniciar()
       } catch (error) {
-          alert(error)
+          // alert(error)
+          this.mensaje(error, 'Error', 'error')
       }finally{
         this.loading = false
       }
@@ -155,26 +159,11 @@ export default Vue.extend({
     },
 
     async deleteItem(item){
-      this.$swal({
-        title: '¿Estas seguro?',
-        html: `Borrar categoría <br><b>${item.descripcion}</b>`,
-        type: 'danger',
-        icon:'question',
-        showCancelButton: true,
-        confirmButtonText:'si, Borrarlo',
-        cancelButtonText: 'No, mantenerlo',
-        showCloseButton: true,
-        showLoaderOnConfirm: true
-      }).then( async(result) => {
-        if(result.value){
-          await this.api.delCategoria(item.id)
-          this.iniciar()
-          this.$swal("Borrado", "Se borró correctamente la categoría", "success")
-        } else {
-          this.$swal("Cancelado", "Se mantiene correctamente la categoría", "info")
-        }
-      })
+      if(await this.mensajeSiNo(`Borrar categoria ${item.descripcion}`)){
+        await this.api.delCategoria(item.id)
         this.iniciar()
+        this.mensaje("Eliminó la categoría satisfactoriamente", 'categoria')
+      }
     }
   },
   //se ejecuta cuando se crea el componente

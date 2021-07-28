@@ -21,20 +21,20 @@ export class ApiCmp extends Api{
   }
 
   // // compras
-  // async get(id:number){
-  //   return await super.get(nombreEnc, id)
-  // }
+  async getCompra(id){
+    return await super.get(nombreEnc, id)
+  }
 
-  // async guardarEncabezado(obj:object){
-  //   return await super.save(nombreEnc, obj)
-  // }
+  async guardarEncabezado(obj:object){
+    return await super.save(nombreEnc, obj)
+  }
 
-  // async guardarDetalle(obj:object){
-  //   return await super.save(nombreDet, obj)
-  // }
+  async guardarDetalle(obj:object){
+    return await super.save(nombreDet, obj)
+  }
 
-  // async borrarDetalle(id:number){
-  //   return await super.delete(nombreDet, id)
-  // }
+  async borrarDetalle(id:number){
+    return await super.delete(nombreDet, id)
+  }
 
 }

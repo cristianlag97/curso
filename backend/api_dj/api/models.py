@@ -1,8 +1,8 @@
 from django.db import models
 
 class ModeloEdit(models.Model):
-  fecha_creacion = models.DateField(auto_now_add=True)# solo se efectua cuando se crea
-  fecha_modificacion = models.DateField(auto_now = True)#se efecxtua en cada cambio que se haga
+  fecha_creacion = models.DateTimeField(auto_now_add=True             )# solo se efectua cuando se crea
+  fecha_modificacion = models.DateTimeField(auto_now= True)#se efecxtua en cada cambio que se haga
 
   class Meta:
     abstract = True
@@ -21,7 +21,7 @@ class Documento(models.Model):
     def save(self, **kwargs):
       self.nombre = self.nombre.upper()
       super(Documento, self).save()
-  
+
   class Meta:
     verbose_name_plural = "Documentos"
 
@@ -62,7 +62,7 @@ class Producto(models.Model):
 
   def __str__(self):
     return self.descripcion
-  
+
   def save(self, **kwargs):
     self.descripcion = self.descripcion.upper()
     super(Producto, self).save()
@@ -83,8 +83,8 @@ class Proveedor(models.Model):
     super(Proveedor, self).save()
 
   class Meta:
-    verbose_name_plural = "Proveedores"  
-  
+    verbose_name_plural = "Proveedores"
+
 class ComprasEnc(ModeloEdit):
   proveedor = models.ForeignKey(Proveedor, on_delete=models.CASCADE)
   fecha = models.DateField(null = False, blank=False)
@@ -96,22 +96,23 @@ class ComprasEnc(ModeloEdit):
     verbose_name_plural = "Encabezado de compras"
 
 class ComprasDet(ModeloEdit):
-  cabecera = models.ForeignKey(ComprasEnc, on_delete=models.CASCADE)
-  producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
-  cantidad = models.IntegerField(default = 0)
-  precio = models.FloatField(default = 0)
-  descuento = models.FloatField(default = 0)
+  cabecera = models.ForeignKey(ComprasEnc,related_name='detalle',on_delete=models.CASCADE)
+  producto = models.ForeignKey(Producto,on_delete=models.DO_NOTHING)
+  cantidad = models.IntegerField(default=0)
+  precio = models.FloatField(default=0)
+
   @property
   def subtotal(self):
     return self.cantidad * self.precio
+
+  descuento = models.FloatField(default = 0)
 
   @property
   def total(self):
     return self.subtotal - self.descuento
 
   def __str__(self):
-    return '{} - {} - {}'.format(self.id, self.cabecera, self.producto)
+    return '{}-{}-{}'.format(self.id,self.cabecera,self.producto)
 
   class Meta:
     verbose_name_plural = "Detalle de compras"
-  

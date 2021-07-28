@@ -33,8 +33,8 @@ class ComprasDetSerializer(serializers.ModelSerializer):
   producto_descripcion = serializers.ReadOnlyField(source='producto.descripcion')
   class Meta:
     model = ComprasDet
-    fields = ('cabecera', 'id', 'producto', 'cantidad', 'precio', 
-              'descuento', 'subtotal', 'total', 'producto_descripcion')
+    fields = ('cabecera', 'id', 'producto', 'cantidad', 'precio',
+              'subtotal', 'descuento', 'total', 'producto_descripcion')
 
 class ComprasSerializer(serializers.ModelSerializer):
   detalle = ComprasDetSerializer(many = True, read_only=True)

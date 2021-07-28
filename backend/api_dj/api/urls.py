@@ -11,7 +11,7 @@ router.register('subcategoria', SubCategoriaViewset)
 router.register('producto', ProductoViewset)
 router.register('proveedor', ProveedorViewset)
 router.register('compras', ComprasViewset)
-router.register('compras-detalle', ComprasDetViewset)
+router.register('compra-detalle', ComprasDetViewset)
 
 
 urlpatterns = [
